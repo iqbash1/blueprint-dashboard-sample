@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="GUILD Consulting proof of concept — performance dashboard for the Chamber of Commerce Hawaii 2030 Blueprint.">
+<title>2030 Blueprint — Sample Dashboard</title>
+</head>
+<body style="margin:0">
+<style>
+  .pg{
+    color-scheme:light;
+    --page:#f6f7f5; --surface:#fdfdfc; --surface2:#f1f3f0;
+    --ink:#182529; --ink2:#4e5f5d; --muted:#7d8a86;
+    --grid:#e3e6e0; --axis:#c2c8c1; --ring:rgba(20,37,41,.10);
+    --hi:#0d9488; --hi-soft:rgba(13,148,136,.10); --us:#2a78d6;
+    --bar:#d6ded9; --accent:#0e6b66;
+    --good:#006300; --bad:#b23434; --flat:#5a6b74;
+    --chip-good-bg:rgba(12,131,12,.10); --chip-bad-bg:rgba(208,59,59,.10); --chip-flat-bg:rgba(90,107,116,.10);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    background:var(--page); color:var(--ink);
+    margin:0; padding:0 20px 56px; min-height:100vh;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:where(:not([data-theme="light"])) .pg{
+      color-scheme:dark;
+      --page:#101413; --surface:#181d1c; --surface2:#1f2523;
+      --ink:#eef2f0; --ink2:#b3bfba; --muted:#8b9793;
+      --grid:#2a312e; --axis:#3a423f; --ring:rgba(255,255,255,.10);
+      --hi:#29a396; --hi-soft:rgba(41,163,150,.14); --us:#3987e5;
+      --bar:#323b38;
+      --good:#3dbb3d; --bad:#e06666; --flat:#9aa8b0;
+      --chip-good-bg:rgba(61,187,61,.14); --chip-bad-bg:rgba(224,102,102,.14); --chip-flat-bg:rgba(154,168,176,.14);
+    }
+  }
+  :root[data-theme="dark"] .pg{
+    color-scheme:dark;
+    --page:#101413; --surface:#181d1c; --surface2:#1f2523;
+    --ink:#eef2f0; --ink2:#b3bfba; --muted:#8b9793;
+    --grid:#2a312e; --axis:#3a423f; --ring:rgba(255,255,255,.10);
+    --hi:#29a396; --hi-soft:rgba(41,163,150,.14); --us:#3987e5;
+    --bar:#323b38;
+    --good:#3dbb3d; --bad:#e06666; --flat:#9aa8b0;
+    --chip-good-bg:rgba(61,187,61,.14); --chip-bad-bg:rgba(224,102,102,.14); --chip-flat-bg:rgba(154,168,176,.14);
+  }
+  :root[data-theme="light"] .pg{
+    color-scheme:light;
+    --page:#f6f7f5; --surface:#fdfdfc; --surface2:#f1f3f0;
+    --ink:#182529; --ink2:#4e5f5d; --muted:#7d8a86;
+    --grid:#e3e6e0; --axis:#c2c8c1; --ring:rgba(20,37,41,.10);
+    --hi:#0d9488; --hi-soft:rgba(13,148,136,.10); --us:#2a78d6;
+    --bar:#d6ded9;
+    --good:#006300; --bad:#b23434; --flat:#5a6b74;
+    --chip-good-bg:rgba(12,131,12,.10); --chip-bad-bg:rgba(208,59,59,.10); --chip-flat-bg:rgba(90,107,116,.10);
+  }
+  .pg *{box-sizing:border-box}
+  .wrap{max-width:980px;margin:0 auto}
+  .masthead{padding:36px 0 8px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  .masthead h1{font-size:clamp(22px,3.4vw,30px);line-height:1.15;margin:6px 0 4px;font-weight:750;letter-spacing:-.01em;text-wrap:balance}
+  .sub{color:var(--ink2);font-size:14px;max-width:70ch;line-height:1.5;margin:0}
+  .sample-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:3px 10px;margin-left:10px;vertical-align:3px}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:14px 0 8px;font-size:12.5px;color:var(--muted)}
+  .meta-row b{color:var(--ink2);font-weight:600}
+  .notice{background:var(--surface2);border:1px solid var(--grid);border-radius:8px;padding:10px 14px;font-size:12.5px;color:var(--ink2);line-height:1.5;margin:10px 0 26px}
+  .card{background:var(--surface);border:1px solid var(--ring);border-radius:10px;padding:22px 22px 14px;margin:0 0 26px;box-shadow:0 1px 2px rgba(15,30,28,.04)}
+  .m-head{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;justify-content:space-between}
+  .m-tags{font-size:11px;letter-spacing:.10em;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:2px}
+  .m-tags .sep{margin:0 6px;opacity:.5}
+  .card h2{font-size:19px;margin:0 0 2px;font-weight:700;letter-spacing:-.005em}
+  .headline{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:2px 0 4px}
+  .big{font-size:30px;font-weight:750;letter-spacing:-.01em}
+  .big small{font-size:14px;font-weight:600;color:var(--ink2);letter-spacing:0}
+  .chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:650;border-radius:999px;padding:3px 10px}
+  .chip.good{color:var(--good);background:var(--chip-good-bg)}
+  .chip.bad{color:var(--bad);background:var(--chip-bad-bg)}
+  .chip.flat{color:var(--flat);background:var(--chip-flat-bg)}
+  .chip-note{font-size:12px;color:var(--muted)}
+  .tabs{display:flex;gap:2px;margin:14px 0 0;border-bottom:1px solid var(--grid);flex-wrap:wrap}
+  .tab{appearance:none;background:none;border:none;border-bottom:2.5px solid transparent;padding:8px 12px 9px;font:inherit;font-size:13.5px;font-weight:600;color:var(--ink2);cursor:pointer;border-radius:6px 6px 0 0}
+  .tab:hover{background:var(--surface2)}
+  .tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+  .tab:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  .pane{padding:16px 0 4px}
+  .pane[hidden]{display:none}
+  .legend{display:flex;gap:18px;align-items:center;font-size:12.5px;color:var(--ink2);margin:0 0 6px}
+  .legend .sw{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:3px}
+  .toggle{display:inline-flex;border:1px solid var(--grid);border-radius:7px;overflow:hidden;margin:0 0 12px}
+  .toggle button{appearance:none;border:none;background:var(--surface);color:var(--ink2);font:inherit;font-size:12.5px;font-weight:600;padding:5px 12px;cursor:pointer}
+  .toggle button[aria-pressed="true"]{background:var(--accent);color:#fff}
+  .toggle button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  svg{display:block;width:100%;height:auto}
+  svg text{font-family:inherit}
+  .tick{font-size:11px;fill:var(--muted);font-variant-numeric:tabular-nums}
+  .dlabel{font-size:12px;font-weight:650}
+  .src{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;border-top:1px solid var(--grid);margin-top:12px;padding:10px 0 4px;font-size:12px;color:var(--muted)}
+  .src a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent}
+  .src a:hover{border-bottom-color:var(--accent)}
+  .dclass{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);background:var(--surface2);border:1px solid var(--grid);border-radius:5px;padding:2px 7px}
+  .about dl{display:grid;grid-template-columns:190px 1fr;gap:8px 18px;margin:4px 0;font-size:13.5px;line-height:1.5}
+  .about dt{color:var(--muted);font-weight:600}
+  .about dd{margin:0;color:var(--ink)}
+  .about a{color:var(--accent)}
+  details.tbl{margin:10px 0 2px;font-size:13px}
+  details.tbl summary{cursor:pointer;color:var(--ink2);font-weight:600;font-size:12.5px}
+  details.tbl table{border-collapse:collapse;margin-top:8px;font-variant-numeric:tabular-nums}
+  details.tbl th,details.tbl td{border:1px solid var(--grid);padding:4px 10px;text-align:right;font-size:12.5px}
+  details.tbl th:first-child,details.tbl td:first-child{text-align:left}
+  details.tbl th{background:var(--surface2);font-weight:650}
+  .tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--page);font-size:12px;line-height:1.45;padding:6px 9px;border-radius:6px;opacity:0;transform:translate(-50%,calc(-100% - 10px));white-space:nowrap;z-index:50;font-variant-numeric:tabular-nums}
+  .impl h2{font-size:17px}
+  .impl .vocab{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px}
+  .impl .vocab span{font-size:12px;font-weight:650;border:1px solid var(--grid);background:var(--surface2);color:var(--ink2);border-radius:999px;padding:3px 11px}
+  .impl table{width:100%;border-collapse:collapse;font-size:13px}
+  .impl th,.impl td{text-align:left;padding:8px 10px;border-top:1px solid var(--grid);vertical-align:top;line-height:1.45}
+  .impl th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-top:none}
+  .impl .st{font-weight:650;color:var(--accent);white-space:nowrap}
+  .impl .st.na{color:var(--muted)}
+  .impl a{color:var(--accent)}
+  .method{font-size:13.5px;line-height:1.6;color:var(--ink2)}
+  .method h2{font-size:17px;color:var(--ink)}
+  .method h3{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);margin:16px 0 6px}
+  .method ul{margin:6px 0;padding-left:20px}
+  .method li{margin:3px 0}
+  .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--grid);font-size:12px;color:var(--muted);line-height:1.6}
+  @media (max-width:640px){ .about dl{grid-template-columns:1fr} .about dt{margin-top:6px} .m-head{flex-direction:column;gap:2px} }
+  @media print{ .tabs,.toggle,details.tbl{display:none} .pane[hidden]{display:block} .card{break-inside:avoid} }
+</style>
+
+<div class="pg">
+  <div class="wrap">
+    <header class="masthead">
+      <div class="eyebrow">GUILD Consulting · Proof of concept</div>
+      <h1>2030 Blueprint for Hawaiʻi — Performance Dashboard<span class="sample-pill">Sample</span></h1>
+      <p class="sub">A working demonstration of the Blueprint measurement system: three measures, each with trend, U.S. comparison, 50-state standing, and full methodology metadata. All values are live from authoritative public sources.</p>
+      <div class="meta-row">
+        <span>Data as of <b>July 16, 2026</b></span>
+        <span>Measures: <b>3 of 17 planned</b></span>
+        <span>Data class: <b>Public — reproducible</b></span>
+        <span>Targets: <b>not yet set</b></span>
+      </div>
+      <div class="notice"><b>Independent proof of concept prepared by GUILD Consulting.</b> Not an official Chamber of Commerce Hawaiʻi product, and not endorsed by the Chamber. Built to demonstrate the measure template proposed for the 2030 Blueprint (Action 15). Statuses use neutral evidence vocabulary; no performance grades are assigned. Working sample — for partner review.</div>
+    </header>
+
+    <main id="metrics"></main>
+
+    <section class="card impl">
+      <div class="m-tags">Implementation layer · Preview — full version in Phase 1+</div>
+      <h2>Are the 17 Blueprint actions being completed?</h2>
+      <p class="sub" style="margin:4px 0 2px">The full system tracks every action with owner, milestones, funding, and evidence-linked status. Until 2030 targets and owner reporting exist, status uses neutral evidence vocabulary only:</p>
+      <div class="vocab"><span>Documented</span><span>Partially documented</span><span>No public evidence located</span><span>Not yet assessable</span></div>
+      <table>
+        <tr><th style="width:44%">Action (of 17)</th><th style="width:18%">Status</th><th>Public evidence</th></tr>
+        <tr><td><b>8.</b> Target growth in the defense sector — knowledge-sharing among Hawaiʻi defense contractors</td><td class="st">Documented</td><td>Hawaiʻi Defense Alliance created by the Chamber's Military Affairs Council (Blueprint report, p. 38)</td></tr>
+        <tr><td><b>2.</b> Promote state-level regulatory review and reform</td><td class="st">Partially documented</td><td><a href="https://www.capitol.hawaii.gov/session2024/bills/SB2974_.HTM" target="_blank" rel="noopener">Act 142 (SB2974, 2024)</a> business revitalization task force; no third-party evaluator engagement located</td></tr>
+        <tr><td><b>15.</b> Establish a dashboard or scorecard to monitor and report progress</td><td class="st">Partially documented</td><td><a href="https://www.cochawaii.org/2030-blueprint/" target="_blank" rel="noopener">Blueprint Scorecard</a> shows one headline statistic per committee; no published methodology, targets, or time series</td></tr>
+        <tr><td><b>5.</b> Expand STEM education — computer science in schools</td><td class="st">Documented</td><td>All public schools required to offer computer science (Blueprint report, p. 50); enrollment/completion data not yet public</td></tr>
+        <tr><td><b>1, 3, 4, 6–7, 9–14, 16–17.</b> Remaining actions</td><td class="st na">Not yet assessed</td><td>Assessed in the full build; each action page links bills, budgets, and program records</td></tr>
+      </table>
+    </section>
+
+    <section class="card method">
+      <h2>Methodology & about this sample</h2>
+      <h3>Two layers</h3>
+      <p><b style="color:var(--ink)">Results</b> — are Hawaiʻi's economy and living conditions improving? · <b style="color:var(--ink)">Implementation</b> — are the 17 Blueprint actions being completed? Every results measure carries the same metadata: definition, baseline, latest value, trend, comparison, source & freshness, data class, and (once approved) a 2030 target with calculated on-track status.</p>
+      <h3>State standing views</h3>
+      <p>A standing tab is included only where a same-methodology series exists for all 50 states and D.C. (here: BLS payrolls, Zillow ZHVI, Census Business Formation Statistics), so rankings are always like-for-like. Measures without valid national comparators (e.g., visitor arrivals) carry no standing tab.</p>
+      <h3>Direction chips</h3>
+      <p>Because the Blueprint does not yet define quantified 2030 targets, this sample shows <b style="color:var(--ink)">direction relative to the Blueprint objective since the report's baseline</b> (improving / worsening) rather than on-track judgments. On-track status requires targets approved by the governing body and a published, metric-specific trajectory methodology.</p>
+      <h3>Data classes & production path</h3>
+      <ul>
+        <li><b style="color:var(--ink)">This sample:</b> all three measures are <i>Public — reproducible</i> (BLS via FRED; Zillow research data; Census BFS via FRED; population via Census). Refresh is scriptable monthly.</li>
+        <li>The full system adds <i>Public — analyst-coded</i> (action status from bills and budgets), <i>Partner-supplied</i> (UH, HIDOE/P–20, agencies), and <i>Action-owner reported</i> classes — each labeled on the measure.</li>
+      </ul>
+      <h3>Known limits — disclosed, not hidden</h3>
+      <ul>
+        <li>Federal series lag one to three months (payrolls, applications) or one to two years (ACS, BDS survival data).</li>
+        <li>Seasonally adjusted series are revised; values shown reflect the vintage on the "as of" date.</li>
+        <li>Zillow ZHVI is a modeled home-value index — methodologically consistent across states, but not a government statistic; it is used because no federal series publishes a monthly all-state home-value level.</li>
+        <li>Business applications count filings, not operating businesses; the full system pairs them with actual employer formations and survival.</li>
+      </ul>
+      <div class="foot">Prepared by GUILD Consulting · July 16, 2026 · Sample v0.1 · Sources: U.S. Bureau of Labor Statistics (State and Area Employment via FRED); Zillow Home Value Index (state & U.S. research CSVs, June 2026); U.S. Census Bureau Business Formation Statistics (via FRED) and Population Estimates; Chamber of Commerce Hawaiʻi public materials; 2030 Blueprint for Hawaiʻi report (Economic Leadership LLC, 2024). This page is a demonstration artifact; nothing here represents the views of the Chamber of Commerce Hawaiʻi.</div>
+    </section>
+  </div>
+  <div class="tip" id="tip" role="presentation"></div>
+</div>
+
+<script>
+const DATA = {"asof":"2026-07-16","series":{"hi_jobs":[["2019-01",656.9],["2019-02",658.9],["2019-03",658.3],["2019-04",657.4],["2019-05",658.2],["2019-06",656.5],["2019-07",657.4],["2019-08",656.7],["2019-09",662.2],["2019-10",660.8],["2019-11",660.6],["2019-12",659.3],["2020-01",663.4],["2020-02",662.6],["2020-03",655.9],["2020-04",508.9],["2020-05",508.1],["2020-06",526.3],["2020-07",527.6],["2020-08",529.4],["2020-09",512.6],["2020-10",531.1],["2020-11",543.1],["2020-12",551.1],["2021-01",553.8],["2021-02",556.4],["2021-03",564.9],["2021-04",578.5],["2021-05",584.2],["2021-06",591.6],["2021-07",600.7],["2021-08",600.5],["2021-09",598.9],["2021-10",602.4],["2021-11",603.6],["2021-12",606.1],["2022-01",604.9],["2022-02",607.5],["2022-03",610.7],["2022-04",614.4],["2022-05",613.1],["2022-06",614.9],["2022-07",620.2],["2022-08",622.8],["2022-09",625.3],["2022-10",627.5],["2022-11",627.9],["2022-12",628.0],["2023-01",628.4],["2023-02",633.2],["2023-03",632.2],["2023-04",633.8],["2023-05",633.3],["2023-06",634.6],["2023-07",634.4],["2023-08",631.8],["2023-09",630.2],["2023-10",631.0],["2023-11",632.1],["2023-12",633.7],["2024-01",635.0],["2024-02",637.3],["2024-03",637.6],["2024-04",635.3],["2024-05",638.5],["2024-06",636.3],["2024-07",636.1],["2024-08",638.3],["2024-09",641.5],["2024-10",641.6],["2024-11",642.9],["2024-12",641.3],["2025-01",644.0],["2025-02",641.6],["2025-03",643.9],["2025-04",642.0],["2025-05",641.9],["2025-06",639.7],["2025-07",641.5],["2025-08",641.7],["2025-09",642.0],["2025-10",642.8],["2025-11",642.8],["2025-12",641.5],["2026-01",643.3],["2026-02",643.4],["2026-03",642.6],["2026-04",644.0],["2026-05",645.9]],"us_jobs":[["2019-01",150060.0],["2019-02",150067.0],["2019-03",150295.0],["2019-04",150591.0],["2019-05",150618.0],["2019-06",150838.0],["2019-07",150937.0],["2019-08",151169.0],["2019-09",151365.0],["2019-10",151460.0],["2019-11",151667.0],["2019-12",151794.0],["2020-01",152031.0],["2020-02",152293.0],["2020-03",150895.0],["2020-04",130426.0],["2020-05",133040.0],["2020-06",137671.0],["2020-07",139255.0],["2020-08",140821.0],["2020-09",141770.0],["2020-10",142460.0],["2020-11",142733.0],["2020-12",142548.0],["2021-01",142863.0],["2021-02",143380.0],["2021-03",144232.0],["2021-04",144587.0],["2021-05",145065.0],["2021-06",145820.0],["2021-07",146762.0],["2021-08",147314.0],["2021-09",147771.0],["2021-10",148572.0],["2021-11",149230.0],["2021-12",149816.0],["2022-01",150006.0],["2022-02",150825.0],["2022-03",151315.0],["2022-04",151623.0],["2022-05",151924.0],["2022-06",152358.0],["2022-07",153072.0],["2022-08",153362.0],["2022-09",153582.0],["2022-10",153939.0],["2022-11",154242.0],["2022-12",154342.0],["2023-01",154776.0],["2023-02",155066.0],["2023-03",155134.0],["2023-04",155375.0],["2023-05",155655.0],["2023-06",155880.0],["2023-07",156043.0],["2023-08",156261.0],["2023-09",156417.0],["2023-10",156576.0],["2023-11",156703.0],["2023-12",156857.0],["2024-01",157032.0],["2024-02",157238.0],["2024-03",157466.0],["2024-04",157530.0],["2024-05",157608.0],["2024-06",157695.0],["2024-07",157748.0],["2024-08",157757.0],["2024-09",157912.0],["2024-10",157945.0],["2024-11",158079.0],["2024-12",158316.0],["2025-01",158268.0],["2025-02",158310.0],["2025-03",158377.0],["2025-04",158485.0],["2025-05",158498.0],["2025-06",158478.0],["2025-07",158542.0],["2025-08",158472.0],["2025-09",158548.0],["2025-10",158408.0],["2025-11",158449.0],["2025-12",158432.0],["2026-01",158592.0],["2026-02",158436.0],["2026-03",158650.0],["2026-04",158798.0],["2026-05",158927.0],["2026-06",158984.0]],"hi_ba":[["2019-01",1311.0],["2019-02",1349.0],["2019-03",1383.0],["2019-04",1145.0],["2019-05",1106.0],["2019-06",1137.0],["2019-07",1103.0],["2019-08",1121.0],["2019-09",1183.0],["2019-10",1220.0],["2019-11",1191.0],["2019-12",1310.0],["2020-01",1075.0],["2020-02",1205.0],["2020-03",1011.0],["2020-04",1008.0],["2020-05",1139.0],["2020-06",1420.0],["2020-07",1508.0],["2020-08",1540.0],["2020-09",1527.0],["2020-10",1504.0],["2020-11",1466.0],["2020-12",1323.0],["2021-01",1599.0],["2021-02",1529.0],["2021-03",1542.0],["2021-04",1588.0],["2021-05",1769.0],["2021-06",1564.0],["2021-07",1833.0],["2021-08",1579.0],["2021-09",1637.0],["2021-10",1514.0],["2021-11",1587.0],["2021-12",1568.0],["2022-01",1628.0],["2022-02",1592.0],["2022-03",1512.0],["2022-04",1580.0],["2022-05",1528.0],["2022-06",1482.0],["2022-07",1544.0],["2022-08",1569.0],["2022-09",1507.0],["2022-10",1610.0],["2022-11",1556.0],["2022-12",1470.0],["2023-01",1514.0],["2023-02",1613.0],["2023-03",1630.0],["2023-04",1594.0],["2023-05",1495.0],["2023-06",1658.0],["2023-07",1584.0],["2023-08",1641.0],["2023-09",1615.0],["2023-10",1631.0],["2023-11",1634.0],["2023-12",1539.0],["2024-01",1550.0],["2024-02",1499.0],["2024-03",1538.0],["2024-04",1520.0],["2024-05",1469.0],["2024-06",1581.0],["2024-07",1497.0],["2024-08",1339.0],["2024-09",1446.0],["2024-10",1483.0],["2024-11",1596.0],["2024-12",1543.0],["2025-01",1276.0],["2025-02",1460.0],["2025-03",1866.0],["2025-04",1806.0],["2025-05",1842.0],["2025-06",1571.0],["2025-07",1578.0],["2025-08",1573.0],["2025-09",1743.0],["2025-10",1498.0],["2025-11",1566.0],["2025-12",1631.0],["2026-01",1709.0],["2026-02",1616.0],["2026-03",1533.0],["2026-04",1433.0],["2026-05",1470.0],["2026-06",1608.0]],"us_ba":[["2019-01",275827.0],["2019-02",299331.0],["2019-03",301093.0],["2019-04",293060.0],["2019-05",287481.0],["2019-06",290529.0],["2019-07",280547.0],["2019-08",292063.0],["2019-09",290721.0],["2019-10",297723.0],["2019-11",293965.0],["2019-12",315267.0],["2020-01",282360.0],["2020-02",303982.0],["2020-03",259162.0],["2020-04",235568.0],["2020-05",298466.0],["2020-06",376926.0],["2020-07",546719.0],["2020-08",484772.0],["2020-09",433059.0],["2020-10",410569.0],["2020-11",396615.0],["2020-12",351615.0],["2021-01",488126.0],["2021-02",434622.0],["2021-03",448765.0],["2021-04",498579.0],["2021-05",505645.0],["2021-06",446232.0],["2021-07",443113.0],["2021-08",427748.0],["2021-09",427508.0],["2021-10",428017.0],["2021-11",432545.0],["2021-12",427901.0],["2022-01",436674.0],["2022-02",427960.0],["2022-03",412246.0],["2022-04",433663.0],["2022-05",430119.0],["2022-06",407753.0],["2022-07",423929.0],["2022-08",419560.0],["2022-09",422293.0],["2022-10",429432.0],["2022-11",416428.0],["2022-12",423745.0],["2023-01",428614.0],["2023-02",446842.0],["2023-03",452843.0],["2023-04",444715.0],["2023-05",449234.0],["2023-06",470793.0],["2023-07",478273.0],["2023-08",467208.0],["2023-09",470317.0],["2023-10",470393.0],["2023-11",455805.0],["2023-12",454137.0],["2024-01",450041.0],["2024-02",443944.0],["2024-03",431289.0],["2024-04",431531.0],["2024-05",427923.0],["2024-06",436016.0],["2024-07",424927.0],["2024-08",436267.0],["2024-09",427221.0],["2024-10",426875.0],["2024-11",446146.0],["2024-12",464450.0],["2025-01",385618.0],["2025-02",432820.0],["2025-03",461056.0],["2025-04",456024.0],["2025-05",448815.0],["2025-06",459613.0],["2025-07",474833.0],["2025-08",478074.0],["2025-09",510794.0],["2025-10",498416.0],["2025-11",537266.0],["2025-12",496139.0],["2026-01",526115.0],["2026-02",496121.0],["2026-03",493792.0],["2026-04",506807.0],["2026-05",525462.0],["2026-06",531423.0]],"hi_zhvi":[["2019-01",613115],["2019-02",613433],["2019-03",614019],["2019-04",615114],["2019-05",616007],["2019-06",616565],["2019-07",616946],["2019-08",616974],["2019-09",616779],["2019-10",616641],["2019-11",617674],["2019-12",619260],["2020-01",621623],["2020-02",624098],["2020-03",626500],["2020-04",628400],["2020-05",628674],["2020-06",627817],["2020-07",627402],["2020-08",629462],["2020-09",634350],["2020-10",640456],["2020-11",647705],["2020-12",655046],["2021-01",661941],["2021-02",668744],["2021-03",675954],["2021-04",684804],["2021-05",695274],["2021-06",707082],["2021-07",717400],["2021-08",724150],["2021-09",729085],["2021-10",735249],["2021-11",743907],["2021-12",753125],["2022-01",768167],["2022-02",788091],["2022-03",812687],["2022-04",832663],["2022-05",848093],["2022-06",857491],["2022-07",861125],["2022-08",858889],["2022-09",853321],["2022-10",848602],["2022-11",845502],["2022-12",842951],["2023-01",838286],["2023-02",833138],["2023-03",829458],["2023-04",830890],["2023-05",833962],["2023-06",837186],["2023-07",839184],["2023-08",841482],["2023-09",843710],["2023-10",843329],["2023-11",842820],["2023-12",842099],["2024-01",842359],["2024-02",842239],["2024-03",844928],["2024-04",850137],["2024-05",854947],["2024-06",855933],["2024-07",855040],["2024-08",854804],["2024-09",856384],["2024-10",857682],["2024-11",857170],["2024-12",855695],["2025-01",853677],["2025-02",852220],["2025-03",849241],["2025-04",845797],["2025-05",841665],["2025-06",837450],["2025-07",833679],["2025-08",831436],["2025-09",831293],["2025-10",833316],["2025-11",835427],["2025-12",836935],["2026-01",837741],["2026-02",838284],["2026-03",839366],["2026-04",838611],["2026-05",837513],["2026-06",836741]],"us_zhvi":[["2019-01",241877],["2019-02",243049],["2019-03",244287],["2019-04",245392],["2019-05",246215],["2019-06",246938],["2019-07",247605],["2019-08",248337],["2019-09",248982],["2019-10",249880],["2019-11",251102],["2019-12",252540],["2020-01",254122],["2020-02",255669],["2020-03",257278],["2020-04",258656],["2020-05",259432],["2020-06",259868],["2020-07",260569],["2020-08",262247],["2020-09",265129],["2020-10",268650],["2020-11",272632],["2020-12",276513],["2021-01",280245],["2021-02",284061],["2021-03",288043],["2021-04",292399],["2021-05",297231],["2021-06",302428],["2021-07",307092],["2021-08",310407],["2021-09",312430],["2021-10",314413],["2021-11",317102],["2021-12",320415],["2022-01",324973],["2022-02",330432],["2022-03",336851],["2022-04",343266],["2022-05",348998],["2022-06",353790],["2022-07",356308],["2022-08",356691],["2022-09",355382],["2022-10",354124],["2022-11",353091],["2022-12",352152],["2023-01",350923],["2023-02",350024],["2023-03",349960],["2023-04",350956],["2023-05",352636],["2023-06",354638],["2023-07",356443],["2023-08",358119],["2023-09",359385],["2023-10",360332],["2023-11",361003],["2023-12",361449],["2024-01",361892],["2024-02",362704],["2024-03",364283],["2024-04",366185],["2024-05",367654],["2024-06",368230],["2024-07",368381],["2024-08",368631],["2024-09",369093],["2024-10",369696],["2024-11",370201],["2024-12",370938],["2025-01",371584],["2025-02",372054],["2025-03",371772],["2025-04",371232],["2025-05",370530],["2025-06",369898],["2025-07",369462],["2025-08",369229],["2025-09",369476],["2025-10",369920],["2025-11",370612],["2025-12",371421],["2026-01",372194],["2026-02",372924],["2026-03",373426],["2026-04",373508],["2026-05",373242],["2026-06",372995]]},"standing":{"jobs":[["DC",-10.8],["HI",-2.5],["VT",-1.7],["MA",-0.9],["IA",-0.2],["OR",-0.1],["MD",0.3],["IL",0.4],["MI",0.8],["LA",0.9],["RI",1.0],["OH",1.4],["CT",1.5],["NH",1.5],["WI",1.5],["NY",1.6],["MN",1.9],["ND",1.9],["WV",2.0],["PA",2.1],["WY",2.1],["MO",2.4],["NE",2.6],["CA",2.9],["KS",2.9],["AK",3.0],["MS",3.0],["IN",3.1],["ME",3.4],["VA",3.5],["WA",3.8],["KY",3.9],["NJ",3.9],["NM",4.2],["CO",5.2],["OK",5.4],["AL",6.1],["DE",6.3],["SD",6.3],["AR",6.6],["GA",7.0],["MT",7.1],["TN",7.2],["SC",9.6],["AZ",9.7],["NC",10.3],["FL",10.4],["TX",11.3],["NV",11.5],["UT",13.5],["ID",14.7]],"ba":[["ME",10.4,47.1],["WV",10.4,83.5],["RI",11.3,48.8],["IA",11.6,70.0],["MA",11.8,47.3],["ND",12.0,40.2],["NE",12.1,63.5],["VT",12.6,46.3],["PA",13.0,64.4],["WI",13.1,78.5],["HI",13.2,30.2],["MN",13.2,66.3],["NH",13.5,72.4],["IN",13.6,75.5],["SD",13.9,68.3],["AR",14.0,70.9],["KS",14.0,84.4],["CT",14.6,63.3],["OR",14.6,58.3],["WA",14.8,66.6],["CA",15.0,60.7],["AL",15.1,88.0],["IL",15.5,66.6],["OH",15.5,93.0],["TN",15.5,91.9],["NY",15.8,37.5],["MI",16.3,73.9],["OK",16.3,63.4],["KY",16.5,129.4],["AK",16.7,51.0],["VA",17.0,71.2],["MD",17.4,43.8],["LA",17.6,50.1],["ID",17.7,66.3],["NC",17.8,91.0],["MO",18.0,91.1],["NJ",18.0,51.9],["SC",18.2,95.8],["TX",18.2,88.6],["AZ",19.9,97.2],["MS",20.1,89.1],["NV",20.9,60.3],["NM",20.9,154.1],["DC",22.6,26.6],["UT",23.3,65.1],["GA",24.4,59.2],["CO",26.3,82.2],["MT",28.2,128.2],["FL",29.8,76.9],["DE",57.8,135.7],["WY",144.0,327.1]],"zhvi":[["West Virginia",182704,22.4],["Mississippi",198428,15.6],["Louisiana",217968,1.7],["Oklahoma",225437,28.5],["Arkansas",228662,24.3],["Kentucky",235363,27.3],["Iowa",241255,27.8],["Alabama",241517,20.7],["Ohio",251502,30.4],["Kansas",252794,32.4],["Indiana",262265,31.3],["Michigan",269972,26.0],["Missouri",271597,27.6],["Nebraska",284464,27.0],["North Dakota",293556,20.3],["Pennsylvania",294099,23.4],["Illinois",298871,29.7],["Texas",302999,14.8],["South Carolina",309323,29.0],["New Mexico",321186,28.7],["South Dakota",325618,28.0],["Georgia",335358,26.2],["Tennessee",338769,29.5],["North Carolina",340430,27.5],["Wisconsin",342279,33.6],["Minnesota",356887,16.3],["Wyoming",372526,26.4],["Florida",378126,25.3],["Alaska",400659,19.4],["Vermont",402017,23.3],["Delaware",412252,23.1],["Virginia",419920,24.7],["Arizona",422822,15.2],["Maine",424107,31.8],["Maryland",436104,15.0],["Nevada",448215,21.2],["Connecticut",455424,41.2],["Montana",476115,30.3],["Idaho",482199,10.1],["Oregon",504432,10.1],["Rhode Island",517078,35.0],["New Hampshire",522944,37.6],["New York",525947,30.0],["Utah",541692,18.2],["Colorado",543435,9.6],["District of Columbia",579332,-10.3],["New Jersey",584681,37.0],["Washington",603303,14.0],["Massachusetts",672867,26.4],["California",775549,16.8],["Hawaii",836741,18.3]]},"names":{"AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District of Columbia","FL":"Florida","GA":"Georgia","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming"}};
+
+const $ = (s,el=document)=>el.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+const fmt = {
+  pct1: v => (v>0?"+":"") + v.toFixed(1) + "%",
+  usd0: v => "$" + Math.round(v).toLocaleString("en-US"),
+  n0:   v => Math.round(v).toLocaleString("en-US"),
+  n1:   v => v.toFixed(1),
+  k:    v => (v/1000).toFixed(0) + "k",
+  mUS: m => { const [y,mo]=m.split("-"); return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+mo-1]+" "+y; }
+};
+function ord(n){const s=["th","st","nd","rd"],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
+function el(tag, attrs={}, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+const tip = $("#tip");
+function showTip(html,x,y){ tip.innerHTML=html; tip.style.opacity=1; tip.style.left=x+"px"; tip.style.top=y+"px"; }
+function hideTip(){ tip.style.opacity=0; }
+
+/* ---------- generic line chart (1-2 series) ---------- */
+function lineChart(host, seriesArr, opts){
+  const Wv=900, Hv=300, m={t:18,r:110,b:30,l:52};
+  const iw=Wv-m.l-m.r, ih=Hv-m.t-m.b;
+  const svg=el("svg",{viewBox:`0 0 ${Wv} ${Hv}`,role:"img","aria-label":opts.aria});
+  const all=seriesArr.flatMap(s=>s.data.map(d=>d[1]));
+  let lo=Math.min(...all), hi=Math.max(...all);
+  if(opts.ref!=null){ lo=Math.min(lo,opts.ref); hi=Math.max(hi,opts.ref); }
+  const pad=(hi-lo)*0.09||1; lo-=pad; hi+=pad;
+  const xs=seriesArr[0].data.map(d=>d[0]);
+  const X=i=>m.l+i/(xs.length-1)*iw;
+  const Y=v=>m.t+(1-(v-lo)/(hi-lo))*ih;
+  // gridlines + y ticks
+  const steps=4;
+  for(let i=0;i<=steps;i++){
+    const v=lo+(hi-lo)*i/steps, y=Y(v);
+    el("line",{x1:m.l,x2:Wv-m.r,y1:y,y2:y,stroke:"var(--grid)","stroke-width":1},svg);
+    const t=el("text",{x:m.l-8,y:y+4,"text-anchor":"end",class:"tick"},svg);
+    t.textContent=opts.yfmt(v);
+  }
+  // x ticks: januaries
+  xs.forEach((d,i)=>{ if(d.endsWith("-01")){ const t=el("text",{x:X(i),y:Hv-8,"text-anchor":"middle",class:"tick"},svg); t.textContent=d.slice(0,4);} });
+  // reference line
+  if(opts.ref!=null){
+    el("line",{x1:m.l,x2:Wv-m.r,y1:Y(opts.ref),y2:Y(opts.ref),stroke:"var(--axis)","stroke-width":1.5,"stroke-dasharray":"5 4"},svg);
+    const t=el("text",{x:Wv-m.r+6,y:Y(opts.ref)+4,class:"tick"},svg); t.textContent=opts.refLabel;
+  }
+  // series
+  seriesArr.forEach(s=>{
+    const pts=s.data.map((d,i)=>`${X(i).toFixed(1)},${Y(d[1]).toFixed(1)}`).join(" ");
+    if(s.area){
+      const a=`${m.l},${Y(lo+pad).toFixed(1)} ${pts} ${X(s.data.length-1).toFixed(1)},${Y(lo+pad).toFixed(1)}`;
+      el("polygon",{points:a,fill:"var(--hi-soft)"},svg);
+    }
+    el("polyline",{points:pts,fill:"none",stroke:s.color,"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"},svg);
+    const last=s.data[s.data.length-1];
+    el("circle",{cx:X(s.data.length-1),cy:Y(last[1]),r:3.6,fill:s.color},svg);
+    const lbl=el("text",{x:X(s.data.length-1)+8,y:Y(last[1])+4,class:"dlabel",fill:s.color},svg);
+    lbl.textContent=s.label+" "+opts.vfmt(last[1]);
+  });
+  // hover
+  const hot=el("rect",{x:m.l,y:m.t,width:iw,height:ih,fill:"transparent"},svg);
+  const cross=el("line",{x1:0,x2:0,y1:m.t,y2:m.t+ih,stroke:"var(--axis)","stroke-width":1,opacity:0},svg);
+  hot.addEventListener("mousemove",ev=>{
+    const r=svg.getBoundingClientRect(), sc=Wv/r.width;
+    const i=Math.max(0,Math.min(xs.length-1,Math.round((ev.clientX-r.left)*sc===0?0:(( (ev.clientX-r.left)*sc)-m.l)/iw*(xs.length-1))));
+    cross.setAttribute("x1",X(i)); cross.setAttribute("x2",X(i)); cross.setAttribute("opacity",.7);
+    const rows=seriesArr.map(s=>`<b>${s.label}</b> ${opts.vfmt(s.data[i][1])}`).join("<br>");
+    showTip(`${fmt.mUS(xs[i])}<br>${rows}`, ev.clientX, ev.clientY);
+  });
+  hot.addEventListener("mouseleave",()=>{cross.setAttribute("opacity",0); hideTip();});
+  host.appendChild(svg);
+}
+
+/* ---------- standing chart (51 horizontal bars) ---------- */
+function standingChart(host, rows, opts){
+  host.innerHTML="";
+  const rowH=15.5, m={t:26,r:70,b:8,l:36};
+  const Wv=900, Hv=m.t+rows.length*rowH+m.b;
+  const svg=el("svg",{viewBox:`0 0 ${Wv} ${Hv}`,role:"img","aria-label":opts.aria});
+  const vals=rows.map(r=>r.v);
+  let lo=Math.min(0,...vals), hi=Math.max(0,...vals,opts.us??-Infinity);
+  const span=hi-lo||1; const iw=Wv-m.l-m.r;
+  const X=v=>m.l+(v-lo)/span*iw;
+  // header note
+  const hd=el("text",{x:m.l,y:14,class:"tick"},svg); hd.textContent=opts.note;
+  rows.forEach((r,i)=>{
+    const y=m.t+i*rowH;
+    const isHI=r.abbr==="HI";
+    const x0=X(Math.min(0,r.v)), x1=X(Math.max(0,r.v));
+    el("rect",{x:x0,y:y+2,width:Math.max(1.5,x1-x0),height:rowH-5,rx:2.5,fill:isHI?"var(--hi)":"var(--bar)"},svg);
+    const t=el("text",{x:m.l-5,y:y+rowH-4,"text-anchor":"end",class:"tick","font-weight":isHI?"800":"400",fill:isHI?"var(--hi)":"var(--muted)"},svg);
+    t.textContent=r.abbr;
+    if(isHI||i===0||i===rows.length-1){
+      const v=el("text",{x:x1+5,y:y+rowH-4,class:"tick","font-weight":isHI?"800":"600",fill:isHI?"var(--hi)":"var(--ink2)"},svg);
+      if(r.v<0){ v.setAttribute("x",X(0)+5); }
+      v.textContent=opts.vfmt(r.v);
+    }
+    const hot=el("rect",{x:0,y:y,width:Wv,height:rowH,fill:"transparent"},svg);
+    hot.addEventListener("mousemove",ev=>showTip(`<b>${r.name}</b> · rank ${r.rank} of ${rows.length}<br>${opts.vfmt(r.v)}`,ev.clientX,ev.clientY));
+    hot.addEventListener("mouseleave",hideTip);
+  });
+  // zero line
+  if(lo<0) el("line",{x1:X(0),x2:X(0),y1:m.t-4,y2:Hv-m.b,stroke:"var(--axis)","stroke-width":1},svg);
+  // US marker
+  if(opts.us!=null){
+    el("line",{x1:X(opts.us),x2:X(opts.us),y1:m.t-4,y2:Hv-m.b,stroke:"var(--ink2)","stroke-width":1.5,"stroke-dasharray":"5 4"},svg);
+    const t=el("text",{x:X(opts.us)+5,y:m.t+6,class:"tick","font-weight":"700",fill:"var(--ink2)"},svg);
+    t.textContent="U.S. "+opts.vfmt(opts.us);
+  }
+  host.appendChild(svg);
+}
+
+/* ---------- table view ---------- */
+function tableView(host, head, rows){
+  const d=document.createElement("details"); d.className="tbl";
+  d.innerHTML=`<summary>View as table</summary>`;
+  const t=document.createElement("table");
+  t.innerHTML="<tr>"+head.map(h=>`<th>${h}</th>`).join("")+"</tr>"+rows.map(r=>"<tr>"+r.map(c=>`<td>${c}</td>`).join("")+"</tr>").join("");
+  d.appendChild(t); host.appendChild(d);
+}
+
+/* ---------- metric card factory ---------- */
+function metricCard(cfg){
+  const card=document.createElement("section"); card.className="card";
+  card.innerHTML=`
+    <div class="m-head">
+      <div>
+        <div class="m-tags">${cfg.tags}</div>
+        <h2>${cfg.title}</h2>
+        <div class="headline"><span class="big">${cfg.headline}</span>
+          <span class="chip ${cfg.chip.cls}">${cfg.chip.icon} ${cfg.chip.text}</span>
+          <span class="chip-note">${cfg.chip.note}</span></div>
+      </div>
+    </div>
+    <div class="tabs" role="tablist"></div>
+    <div class="panes"></div>
+    <div class="src">${cfg.srcHtml} <span class="dclass">Public — reproducible</span></div>`;
+  const tabbar=$(".tabs",card), panes=$(".panes",card);
+  cfg.tabs.forEach((tb,i)=>{
+    const b=document.createElement("button");
+    b.className="tab"; b.setAttribute("role","tab"); b.textContent=tb.name;
+    b.setAttribute("aria-selected", i===0 ? "true":"false");
+    const pane=document.createElement("div"); pane.className="pane"; pane.setAttribute("role","tabpanel");
+    if(i>0) pane.hidden=true;
+    panes.appendChild(pane);
+    b.addEventListener("click",()=>{
+      tabbar.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected","false"));
+      panes.querySelectorAll(".pane").forEach(x=>x.hidden=true);
+      b.setAttribute("aria-selected","true"); pane.hidden=false;
+      if(!pane.dataset.built){ tb.build(pane); pane.dataset.built=1; }
+    });
+    tabbar.appendChild(b);
+    if(i===0){ tb.build(pane); pane.dataset.built=1; }
+  });
+  $("#metrics").appendChild(card);
+}
+
+/* ================= build the three measures ================= */
+const S=DATA.series, ST=DATA.standing, NM=DATA.names;
+const A2N={}; Object.entries(NM).forEach(([ab,nm])=>A2N[nm]=ab);
+
+function idx(series, baseYM){ const base=series.find(d=>d[0]===baseYM)[1]; return series.map(d=>[d[0], d[1]/base*100]); }
+function rankify(arr){ return arr.map((r,i)=>({...r, rank:i+1})); }
+
+/* ---- 1. Jobs ---- */
+(() => {
+  const jb=S.hi_jobs, feb=jb.find(d=>d[0]==="2020-02")[1], last=jb[jb.length-1];
+  const gap=(last[1]-feb)/feb*100;
+  const stRows=rankify(ST.jobs.map(([ab,v])=>({abbr:ab,name:NM[ab],v})));
+  const hiRank=stRows.find(r=>r.abbr==="HI").rank;
+  const usGap=(()=>{const u=S.us_jobs, f=u.find(d=>d[0]==="2020-02")[1], l=u[u.length-1][1]; return (l-f)/f*100;})();
+  metricCard({
+    tags:"Results · Workforce · Actions 4–5 · Economic Action committee",
+    title:"Nonfarm jobs vs. pre-pandemic level",
+    headline:`${fmt.pct1(gap)} <small>vs. Feb 2020 · ${fmt.n0(last[1]*1000)} jobs (${fmt.mUS(last[0])})</small>`,
+    chip:{cls:"good",icon:"↑",text:"Improving",note:`was −4.4% at report baseline (Nov 2023) · still second-worst of 51`},
+    srcHtml:`Source: <a href="https://fred.stlouisfed.org/series/HINA" target="_blank" rel="noopener">BLS State &amp; Area Employment via FRED (HINA)</a> · seasonally adjusted · updates monthly · baseline: Feb 2020`,
+    tabs:[
+      {name:"Trend", build:p=>{
+        lineChart(p,[{data:jb,color:"var(--hi)",label:"Hawaiʻi",area:true}],
+          {yfmt:v=>fmt.k(v*1000), vfmt:v=>fmt.n0(v*1000), ref:feb, refLabel:"Feb 2020", aria:"Hawaii nonfarm jobs 2019 to 2026"});
+        tableView(p,["Month","Jobs"], jb.filter(d=>d[0].endsWith("-12")||d[0]===last[0]).map(d=>[fmt.mUS(d[0]),fmt.n0(d[1]*1000)]));
+      }},
+      {name:"vs. U.S.", build:p=>{
+        p.innerHTML=`<div class="legend"><span><span class="sw" style="background:var(--hi)"></span>Hawaiʻi</span><span><span class="sw" style="background:var(--us)"></span>United States</span><span style="color:var(--muted)">Indexed: Feb 2020 = 100</span></div>`;
+        const h=document.createElement("div"); p.appendChild(h);
+        lineChart(h,[{data:idx(jb,"2020-02"),color:"var(--hi)",label:"Hawaiʻi"},{data:idx(S.us_jobs,"2020-02"),color:"var(--us)",label:"U.S."}],
+          {yfmt:v=>v.toFixed(0), vfmt:v=>v.toFixed(1), ref:100, refLabel:"Feb 2020 = 100", aria:"Hawaii vs US jobs indexed to February 2020"});
+      }},
+      {name:"State standing", build:p=>{
+        const h=document.createElement("div"); p.appendChild(h);
+        standingChart(h, stRows, {vfmt:fmt.pct1, us:usGap, note:`% change in nonfarm jobs, Feb 2020 → May 2026 · Hawaiʻi ranks ${ord(hiRank)} of 51 from the bottom`, aria:"State ranking of job change since February 2020"});
+        tableView(p,["Rank","State","% vs Feb 2020"], stRows.map(r=>[r.rank,r.name,fmt.pct1(r.v)]));
+      }},
+      {name:"About this measure", build:p=>{
+        p.innerHTML=`<div class="about"><dl>
+          <dt>Definition</dt><dd>Total nonfarm payroll employment, seasonally adjusted, compared with the February 2020 (pre-pandemic) level. Includes all wage and salary jobs; excludes farm work and self-employment.</dd>
+          <dt>Report baseline</dt><dd>−4.4% vs. pre-pandemic (Nov 2023) — "further below its pre-pandemic job level than any other state" (Blueprint report, p. 19)</dd>
+          <dt>Latest</dt><dd>${fmt.n0(last[1]*1000)} jobs, ${fmt.pct1(gap)} vs. Feb 2020 (${fmt.mUS(last[0])}); U.S.: ${fmt.pct1(usGap)}</dd>
+          <dt>2030 target</dt><dd>Not set — requires Chamber approval (Phase 1 target-setting)</dd>
+          <dt>Standing</dt><dd>${ord(hiRank)} from the bottom of 51 on recovery since Feb 2020; only the District of Columbia is further below its pre-pandemic level</dd>
+          <dt>Cadence &amp; freshness</dt><dd>Monthly; ~3-week publication lag; revised annually (benchmark revisions)</dd>
+          <dt>Source</dt><dd>U.S. Bureau of Labor Statistics, State and Area Employment (<a href="https://fred.stlouisfed.org/series/HINA" target="_blank" rel="noopener">FRED: HINA</a>)</dd>
+          <dt>Related Blueprint items</dt><dd>Objective: workforce quantity &amp; skills · Actions 4 (retention), 5 (STEM) · Economic Action committee</dd>
+          <dt>Limits</dt><dd>Payroll survey; counts jobs, not employed residents. Sector detail available in the full build.</dd>
+        </dl></div>`;
+      }}
+    ]
+  });
+})();
+
+/* ---- 2. Home values ---- */
+(() => {
+  const zh=S.hi_zhvi, last=zh[zh.length-1];
+  const v5=zh.find(d=>d[0]==="2021-06")[1], ch5=(last[1]-v5)/v5*100;
+  const lvlRows=rankify([...ST.zhvi].sort((a,b)=>b[1]-a[1]).map(([nm,lvl,g5])=>({abbr:A2N[nm]||nm,name:nm,v:lvl})));
+  const chRows=rankify([...ST.zhvi].sort((a,b)=>b[2]-a[2]).map(([nm,lvl,g5])=>({abbr:A2N[nm]||nm,name:nm,v:g5})));
+  const usLast=S.us_zhvi[S.us_zhvi.length-1][1];
+  const hiLvlRank=lvlRows.find(r=>r.abbr==="HI").rank, hiChRank=chRows.find(r=>r.abbr==="HI").rank;
+  metricCard({
+    tags:"Results · Competitiveness & cost of living · Action 3 · Economic Action committee",
+    title:"Typical home value",
+    headline:`${fmt.usd0(last[1])} <small>${fmt.mUS(last[0])} · highest in the U.S. (U.S.: ${fmt.usd0(usLast)})</small>`,
+    chip:{cls:"bad",icon:"↓",text:"Worsening",note:`+18.3% in 5 years · affordability objective (Action 3)`},
+    srcHtml:`Source: <a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener">Zillow Home Value Index (ZHVI), state series</a> · smoothed, seasonally adjusted · updates monthly`,
+    tabs:[
+      {name:"Trend", build:p=>{
+        lineChart(p,[{data:zh,color:"var(--hi)",label:"Hawaiʻi",area:true}],
+          {yfmt:v=>"$"+fmt.k(v), vfmt:fmt.usd0, aria:"Hawaii typical home value 2019 to 2026"});
+        tableView(p,["Month","Typical home value"], zh.filter(d=>d[0].endsWith("-12")||d[0]===last[0]).map(d=>[fmt.mUS(d[0]),fmt.usd0(d[1])]));
+      }},
+      {name:"vs. U.S.", build:p=>{
+        p.innerHTML=`<div class="legend"><span><span class="sw" style="background:var(--hi)"></span>Hawaiʻi</span><span><span class="sw" style="background:var(--us)"></span>United States</span><span style="color:var(--muted)">Indexed: Jan 2019 = 100</span></div>`;
+        const h=document.createElement("div"); p.appendChild(h);
+        lineChart(h,[{data:idx(zh,"2019-01"),color:"var(--hi)",label:"Hawaiʻi"},{data:idx(S.us_zhvi,"2019-01"),color:"var(--us)",label:"U.S."}],
+          {yfmt:v=>v.toFixed(0), vfmt:v=>v.toFixed(1), ref:100, refLabel:"Jan 2019 = 100", aria:"Hawaii vs US home values indexed to January 2019"});
+      }},
+      {name:"State standing", build:p=>{
+        p.innerHTML=`<div class="toggle" role="group" aria-label="Standing statistic"><button aria-pressed="true">Current level</button><button aria-pressed="false">5-year change</button></div><div class="stg"></div>`;
+        const h=$(".stg",p), btns=p.querySelectorAll(".toggle button");
+        const draw=mode=>{
+          if(mode===0) standingChart(h,lvlRows,{vfmt:v=>"$"+fmt.k(v), us:usLast, note:`Typical home value, June 2026 · Hawaiʻi ranks ${ord(1)} of 51 (highest)`, aria:"State ranking of home value level"});
+          else standingChart(h,chRows,{vfmt:fmt.pct1, us:null, note:`5-year change in typical home value, Jun 2021 → Jun 2026 · Hawaiʻi ranks ${ord(hiChRank)} of 51 fastest`, aria:"State ranking of five year home value change"});
+        };
+        btns.forEach((b,i)=>b.addEventListener("click",()=>{btns.forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");draw(i);}));
+        draw(0);
+        tableView(p,["Rank","State","Level (Jun 2026)","5-yr change"], lvlRows.map(r=>{const g=ST.zhvi.find(z=>z[0]===r.name)[2];return [r.rank,r.name,fmt.usd0(r.v),fmt.pct1(g)];}));
+      }},
+      {name:"About this measure", build:p=>{
+        p.innerHTML=`<div class="about"><dl>
+          <dt>Definition</dt><dd>Zillow Home Value Index: modeled typical value for homes in the 35th–65th percentile range, smoothed and seasonally adjusted, all home types.</dd>
+          <dt>Report baseline</dt><dd>"Home prices … have risen an additional 38% over the past five years" (Blueprint report, p. 21, 2023)</dd>
+          <dt>Latest</dt><dd>${fmt.usd0(last[1])} (${fmt.mUS(last[0])}); +${ch5.toFixed(1)}% over 5 years; U.S. typical value ${fmt.usd0(usLast)}</dd>
+          <dt>2030 target</dt><dd>Not set — an affordability target should reference income-adjusted measures (Phase 1)</dd>
+          <dt>Standing</dt><dd>${ord(1)} of 51 on level (highest in the nation); ${ord(hiChRank)} of 51 on 5-year growth</dd>
+          <dt>Cadence &amp; freshness</dt><dd>Monthly; ~2-week lag; historical values revised as the model updates</dd>
+          <dt>Source</dt><dd><a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener">Zillow Research public data</a> — used because no federal series publishes a monthly all-state home-value level; the full build pairs it with Census cost-burden and permits</dd>
+          <dt>Related Blueprint items</dt><dd>Objective: overall competitiveness · Action 3 (housing supply) · Economic Action committee</dd>
+          <dt>Limits</dt><dd>Modeled index, not a government statistic; level reflects mix of housing stock; affordability requires pairing with incomes.</dd>
+        </dl></div>`;
+      }}
+    ]
+  });
+})();
+
+/* ---- 3. Business applications ---- */
+(() => {
+  const ba=S.hi_ba, last=ba[ba.length-1];
+  const t12=ba.slice(-12).reduce((a,d)=>a+d[1],0);
+  const y19=ba.filter(d=>d[0].startsWith("2019")).reduce((a,d)=>a+d[1],0);
+  const gr=(t12-y19)/y19*100;
+  const usT12=S.us_ba.slice(-12).reduce((a,d)=>a+d[1],0), us19=S.us_ba.filter(d=>d[0].startsWith("2019")).reduce((a,d)=>a+d[1],0);
+  const usGr=(usT12-us19)/us19*100;
+  const perRows=rankify([...ST.ba].sort((a,b)=>a[1]-b[1]).map(([ab,per,g])=>({abbr:ab,name:NM[ab],v:per})));
+  const grRows=rankify([...ST.ba].sort((a,b)=>a[2]-b[2]).map(([ab,per,g])=>({abbr:ab,name:NM[ab],v:g})));
+  const hiPerRank=perRows.find(r=>r.abbr==="HI").rank, hiGrRank=grRows.find(r=>r.abbr==="HI").rank;
+  const hiPer=ST.ba.find(r=>r[0]==="HI")[1];
+  metricCard({
+    tags:"Results · Local wealth & entrepreneurship · Actions 12–13 · Small Business committee",
+    title:"New business applications",
+    headline:`${fmt.n0(t12)} <small>trailing 12 months · ${fmt.n0(last[1])} in ${fmt.mUS(last[0])}</small>`,
+    chip:{cls:"good",icon:"↑",text:"Improving",note:`+${gr.toFixed(0)}% vs. 2019 — but U.S. is +${usGr.toFixed(0)}%; ${ord(hiPerRank)}-lowest per capita`},
+    srcHtml:`Source: <a href="https://fred.stlouisfed.org/series/BABATOTALSAHI" target="_blank" rel="noopener">Census Business Formation Statistics via FRED</a> · seasonally adjusted · updates monthly · per-capita uses Census population estimates`,
+    tabs:[
+      {name:"Trend", build:p=>{
+        lineChart(p,[{data:ba,color:"var(--hi)",label:"Hawaiʻi",area:true}],
+          {yfmt:v=>fmt.n0(v), vfmt:fmt.n0, ref:y19/12, refLabel:"2019 avg", aria:"Hawaii monthly business applications 2019 to 2026"});
+        tableView(p,["Month","Applications"], ba.filter(d=>d[0].endsWith("-12")||d[0]===last[0]).map(d=>[fmt.mUS(d[0]),fmt.n0(d[1])]));
+      }},
+      {name:"vs. U.S.", build:p=>{
+        p.innerHTML=`<div class="legend"><span><span class="sw" style="background:var(--hi)"></span>Hawaiʻi</span><span><span class="sw" style="background:var(--us)"></span>United States</span><span style="color:var(--muted)">Indexed: 2019 monthly average = 100</span></div>`;
+        const h=document.createElement("div"); p.appendChild(h);
+        const nrm=(s,base)=>s.map(d=>[d[0], d[1]/(base/12)*100]);
+        lineChart(h,[{data:nrm(ba,y19),color:"var(--hi)",label:"Hawaiʻi"},{data:nrm(S.us_ba,us19),color:"var(--us)",label:"U.S."}],
+          {yfmt:v=>v.toFixed(0), vfmt:v=>v.toFixed(0), ref:100, refLabel:"2019 avg = 100", aria:"Hawaii vs US business applications indexed to 2019 average"});
+      }},
+      {name:"State standing", build:p=>{
+        p.innerHTML=`<div class="toggle" role="group" aria-label="Standing statistic"><button aria-pressed="true">Per 1,000 residents</button><button aria-pressed="false">Growth vs. 2019</button></div><div class="stg"></div>`;
+        const h=$(".stg",p), btns=p.querySelectorAll(".toggle button");
+        const usPer=usT12/342_000_000*1000;
+        const draw=mode=>{
+          if(mode===0) standingChart(h,perRows,{vfmt:fmt.n1, us:null, note:`Applications per 1,000 residents, trailing 12 months · Hawaiʻi ranks ${ord(hiPerRank)} of 51 (1 = fewest)`, aria:"State ranking of business applications per capita"});
+          else standingChart(h,grRows,{vfmt:fmt.pct1, us:usGr, note:`Growth in applications, 2019 → trailing 12 months · Hawaiʻi ranks ${ord(hiGrRank)} of 51 (1 = slowest)`, aria:"State ranking of business application growth since 2019"});
+        };
+        btns.forEach((b,i)=>b.addEventListener("click",()=>{btns.forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");draw(i);}));
+        draw(0);
+        tableView(p,["Rank","State","Per 1,000 residents","Growth vs 2019"], perRows.map(r=>{const g=ST.ba.find(z=>z[0]===r.abbr)[2];return [r.rank,r.name,fmt.n1(r.v),fmt.pct1(g)];}));
+      }},
+      {name:"About this measure", build:p=>{
+        p.innerHTML=`<div class="about"><dl>
+          <dt>Definition</dt><dd>Applications for an Employer Identification Number (IRS Form SS-4), all NAICS, seasonally adjusted — the earliest broad signal of business formation.</dd>
+          <dt>Report baseline</dt><dd>"New business formations have grown by 37% in Hawaii since the beginning of 2020. Still, that rate is well below the national average and among the bottom 10 U.S. states" (Blueprint report, p. 24)</dd>
+          <dt>Latest</dt><dd>${fmt.n0(t12)} applications in the trailing 12 months (${fmt.n1(hiPer)} per 1,000 residents); +${gr.toFixed(1)}% vs. 2019 against +${usGr.toFixed(1)}% nationally</dd>
+          <dt>2030 target</dt><dd>Not set — requires Chamber approval (Phase 1 target-setting)</dd>
+          <dt>Standing</dt><dd>${ord(hiPerRank)}-lowest of 51 per 1,000 residents; ${ord(hiGrRank)}-slowest growth since 2019</dd>
+          <dt>Cadence &amp; freshness</dt><dd>Monthly; ~2-week lag; revised with seasonal factors</dd>
+          <dt>Source</dt><dd>U.S. Census Bureau, Business Formation Statistics (<a href="https://fred.stlouisfed.org/series/BABATOTALSAHI" target="_blank" rel="noopener">FRED: BABATOTALSAHI</a>); population: Census Vintage 2025 estimates</dd>
+          <dt>Related Blueprint items</dt><dd>Objective: building local wealth · Actions 12 (entrepreneurial ecosystem), 13 (CTE entrepreneurship) · Small Business committee</dd>
+          <dt>Limits</dt><dd>Counts filings, not operating businesses; the full build pairs this with employer formations and survival (Census BDS, ~2-year lag).</dd>
+        </dl></div>`;
+      }}
+    ]
+  });
+})();
+</script>
+
+</body>
+</html>
