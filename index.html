@@ -11,11 +11,11 @@
 <style>
   .pg{
     color-scheme:light;
-    --page:#f6f7f5; --surface:#fdfdfc; --surface2:#f1f3f0;
-    --ink:#182529; --ink2:#4e5f5d; --muted:#7d8a86;
-    --grid:#e3e6e0; --axis:#c2c8c1; --ring:rgba(20,37,41,.10);
-    --hi:#0d9488; --hi-soft:rgba(13,148,136,.10); --us:#2a78d6;
-    --bar:#d6ded9; --accent:#0e6b66;
+    --page:#f4f7f9; --surface:#fdfefe; --surface2:#edf2f6;
+    --ink:#14212b; --ink2:#48596a; --muted:#78878f;
+    --grid:#dfe6ea; --axis:#bcc9d2; --ring:rgba(16,59,94,.12);
+    --hi:#0078c0; --hi-soft:rgba(0,120,192,.10); --us:#1f9d76;
+    --bar:#d3dde6; --accent:#0f5f98;
     --good:#006300; --bad:#b23434; --flat:#5a6b74;
     --chip-good-bg:rgba(12,131,12,.10); --chip-bad-bg:rgba(208,59,59,.10); --chip-flat-bg:rgba(90,107,116,.10);
     font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -25,52 +25,54 @@
   @media (prefers-color-scheme: dark){
     :root:where(:not([data-theme="light"])) .pg{
       color-scheme:dark;
-      --page:#101413; --surface:#181d1c; --surface2:#1f2523;
-      --ink:#eef2f0; --ink2:#b3bfba; --muted:#8b9793;
-      --grid:#2a312e; --axis:#3a423f; --ring:rgba(255,255,255,.10);
-      --hi:#29a396; --hi-soft:rgba(41,163,150,.14); --us:#3987e5;
-      --bar:#323b38;
+      --page:#0e1418; --surface:#162027; --surface2:#1c2831;
+      --ink:#e8eff4; --ink2:#b1c0cb; --muted:#89979f;
+      --grid:#263340; --axis:#374858; --ring:rgba(255,255,255,.10);
+      --hi:#2f93da; --hi-soft:rgba(47,147,218,.16); --us:#27ab84;
+      --bar:#2c3a45; --accent:#5fb0ea;
       --good:#3dbb3d; --bad:#e06666; --flat:#9aa8b0;
       --chip-good-bg:rgba(61,187,61,.14); --chip-bad-bg:rgba(224,102,102,.14); --chip-flat-bg:rgba(154,168,176,.14);
     }
   }
   :root[data-theme="dark"] .pg{
     color-scheme:dark;
-    --page:#101413; --surface:#181d1c; --surface2:#1f2523;
-    --ink:#eef2f0; --ink2:#b3bfba; --muted:#8b9793;
-    --grid:#2a312e; --axis:#3a423f; --ring:rgba(255,255,255,.10);
-    --hi:#29a396; --hi-soft:rgba(41,163,150,.14); --us:#3987e5;
-    --bar:#323b38;
+    --page:#0e1418; --surface:#162027; --surface2:#1c2831;
+    --ink:#e8eff4; --ink2:#b1c0cb; --muted:#89979f;
+    --grid:#263340; --axis:#374858; --ring:rgba(255,255,255,.10);
+    --hi:#2f93da; --hi-soft:rgba(47,147,218,.16); --us:#27ab84;
+    --bar:#2c3a45; --accent:#5fb0ea;
     --good:#3dbb3d; --bad:#e06666; --flat:#9aa8b0;
     --chip-good-bg:rgba(61,187,61,.14); --chip-bad-bg:rgba(224,102,102,.14); --chip-flat-bg:rgba(154,168,176,.14);
   }
   :root[data-theme="light"] .pg{
     color-scheme:light;
-    --page:#f6f7f5; --surface:#fdfdfc; --surface2:#f1f3f0;
-    --ink:#182529; --ink2:#4e5f5d; --muted:#7d8a86;
-    --grid:#e3e6e0; --axis:#c2c8c1; --ring:rgba(20,37,41,.10);
-    --hi:#0d9488; --hi-soft:rgba(13,148,136,.10); --us:#2a78d6;
-    --bar:#d6ded9;
+    --page:#f4f7f9; --surface:#fdfefe; --surface2:#edf2f6;
+    --ink:#14212b; --ink2:#48596a; --muted:#78878f;
+    --grid:#dfe6ea; --axis:#bcc9d2; --ring:rgba(16,59,94,.12);
+    --hi:#0078c0; --hi-soft:rgba(0,120,192,.10); --us:#1f9d76;
+    --bar:#d3dde6; --accent:#0f5f98;
     --good:#006300; --bad:#b23434; --flat:#5a6b74;
     --chip-good-bg:rgba(12,131,12,.10); --chip-bad-bg:rgba(208,59,59,.10); --chip-flat-bg:rgba(90,107,116,.10);
   }
   .pg *{box-sizing:border-box}
   .wrap{max-width:980px;margin:0 auto}
-  .masthead{padding:36px 0 8px}
-  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
-  .masthead h1{font-size:clamp(22px,3.4vw,30px);line-height:1.15;margin:6px 0 4px;font-weight:750;letter-spacing:-.01em;text-wrap:balance}
-  .sub{color:var(--ink2);font-size:14px;max-width:70ch;line-height:1.5;margin:0}
-  .sample-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:3px 10px;margin-left:10px;vertical-align:3px}
-  .meta-row{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:14px 0 8px;font-size:12.5px;color:var(--muted)}
-  .meta-row b{color:var(--ink2);font-weight:600}
-  .notice{background:var(--surface2);border:1px solid var(--grid);border-radius:8px;padding:10px 14px;font-size:12.5px;color:var(--ink2);line-height:1.5;margin:10px 0 26px}
-  .card{background:var(--surface);border:1px solid var(--ring);border-radius:10px;padding:22px 22px 14px;margin:0 0 26px;box-shadow:0 1px 2px rgba(15,30,28,.04)}
+  .masthead{background:linear-gradient(132deg,#0c2740 0%,#103b5e 52%,#0f4e7f 100%);border-radius:14px;padding:30px 30px 20px;margin-top:22px;box-shadow:0 10px 28px rgba(12,39,64,.28)}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8ec9ef}
+  .masthead h1{font-size:clamp(23px,3.6vw,32px);line-height:1.15;margin:7px 0 6px;font-weight:780;letter-spacing:-.012em;text-wrap:balance;color:#fff}
+  .masthead .sub{color:#cfe2f2}.sub{color:var(--ink2);font-size:14px;max-width:70ch;line-height:1.5;margin:0}
+  .sample-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#cfe6f8;border:1.5px solid #6ba9d6;border-radius:999px;padding:3px 10px;margin-left:10px;vertical-align:4px}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:16px 0 10px;font-size:12.5px;color:rgba(255,255,255,.72)}
+  .meta-row b{color:#fff;font-weight:650}
+  .notice{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:10px 14px;font-size:12.5px;color:#d7e6f2;line-height:1.55;margin:12px 0 2px}
+  .notice b{color:#fff}
+  header.masthead{margin-bottom:26px}
+  .card{background:var(--surface);border:1px solid var(--ring);border-top:3px solid var(--hi);border-radius:12px;padding:22px 22px 14px;margin:0 0 26px;box-shadow:0 2px 10px rgba(16,59,94,.07)}
   .m-head{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;justify-content:space-between}
   .m-tags{font-size:11px;letter-spacing:.10em;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:2px}
   .m-tags .sep{margin:0 6px;opacity:.5}
   .card h2{font-size:19px;margin:0 0 2px;font-weight:700;letter-spacing:-.005em}
   .headline{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:2px 0 4px}
-  .big{font-size:30px;font-weight:750;letter-spacing:-.01em}
+  .big{font-size:34px;font-weight:780;letter-spacing:-.015em}
   .big small{font-size:14px;font-weight:600;color:var(--ink2);letter-spacing:0}
   .chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:650;border-radius:999px;padding:3px 10px}
   .chip.good{color:var(--good);background:var(--chip-good-bg)}
@@ -93,7 +95,7 @@
   svg{display:block;width:100%;height:auto}
   svg text{font-family:inherit}
   .tick{font-size:11px;fill:var(--muted);font-variant-numeric:tabular-nums}
-  .dlabel{font-size:12px;font-weight:650}
+  .dlabel{font-size:13px;font-weight:750}
   .src{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;border-top:1px solid var(--grid);margin-top:12px;padding:10px 0 4px;font-size:12px;color:var(--muted)}
   .src a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent}
   .src a:hover{border-bottom-color:var(--accent)}
@@ -201,13 +203,14 @@ const fmt = {
 };
 function ord(n){const s=["th","st","nd","rd"],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
 function el(tag, attrs={}, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+let GID=0;
 const tip = $("#tip");
 function showTip(html,x,y){ tip.innerHTML=html; tip.style.opacity=1; tip.style.left=x+"px"; tip.style.top=y+"px"; }
 function hideTip(){ tip.style.opacity=0; }
 
 /* ---------- generic line chart (1-2 series) ---------- */
 function lineChart(host, seriesArr, opts){
-  const Wv=900, Hv=300, m={t:18,r:110,b:30,l:52};
+  const Wv=900, Hv=300, m={t:18,r:142,b:30,l:52};
   const iw=Wv-m.l-m.r, ih=Hv-m.t-m.b;
   const svg=el("svg",{viewBox:`0 0 ${Wv} ${Hv}`,role:"img","aria-label":opts.aria});
   const all=seriesArr.flatMap(s=>s.data.map(d=>d[1]));
@@ -236,12 +239,17 @@ function lineChart(host, seriesArr, opts){
   seriesArr.forEach(s=>{
     const pts=s.data.map((d,i)=>`${X(i).toFixed(1)},${Y(d[1]).toFixed(1)}`).join(" ");
     if(s.area){
+      const gid="g"+(++GID);
+      const defs=el("defs",{},svg), g=el("linearGradient",{id:gid,x1:0,y1:0,x2:0,y2:1},defs);
+      const s1=el("stop",{offset:"0%"},g); s1.style.stopColor=s.color; s1.style.stopOpacity=.32;
+      const s2=el("stop",{offset:"100%"},g); s2.style.stopColor=s.color; s2.style.stopOpacity=.02;
       const a=`${m.l},${Y(lo+pad).toFixed(1)} ${pts} ${X(s.data.length-1).toFixed(1)},${Y(lo+pad).toFixed(1)}`;
-      el("polygon",{points:a,fill:"var(--hi-soft)"},svg);
+      el("polygon",{points:a,fill:`url(#${gid})`},svg);
     }
-    el("polyline",{points:pts,fill:"none",stroke:s.color,"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"},svg);
+    el("polyline",{points:pts,fill:"none",stroke:s.color,"stroke-width":2.75,"stroke-linejoin":"round","stroke-linecap":"round"},svg);
     const last=s.data[s.data.length-1];
-    el("circle",{cx:X(s.data.length-1),cy:Y(last[1]),r:3.6,fill:s.color},svg);
+    el("circle",{cx:X(s.data.length-1),cy:Y(last[1]),r:6.6,fill:"var(--surface)"},svg);
+    el("circle",{cx:X(s.data.length-1),cy:Y(last[1]),r:4.4,fill:s.color},svg);
     const lbl=el("text",{x:X(s.data.length-1)+8,y:Y(last[1])+4,class:"dlabel",fill:s.color},svg);
     lbl.textContent=s.label+" "+opts.vfmt(last[1]);
   });
@@ -262,7 +270,7 @@ function lineChart(host, seriesArr, opts){
 /* ---------- standing chart (51 horizontal bars) ---------- */
 function standingChart(host, rows, opts){
   host.innerHTML="";
-  const rowH=15.5, m={t:26,r:70,b:8,l:36};
+  const rowH=16, m={t:26,r:70,b:8,l:36};
   const Wv=900, Hv=m.t+rows.length*rowH+m.b;
   const svg=el("svg",{viewBox:`0 0 ${Wv} ${Hv}`,role:"img","aria-label":opts.aria});
   const vals=rows.map(r=>r.v);
@@ -275,7 +283,8 @@ function standingChart(host, rows, opts){
     const y=m.t+i*rowH;
     const isHI=r.abbr==="HI";
     const x0=X(Math.min(0,r.v)), x1=X(Math.max(0,r.v));
-    el("rect",{x:x0,y:y+2,width:Math.max(1.5,x1-x0),height:rowH-5,rx:2.5,fill:isHI?"var(--hi)":"var(--bar)"},svg);
+    if(isHI) el("rect",{x:2,y:y-0.5,width:Wv-4,height:rowH+1,rx:5,fill:"var(--hi-soft)"},svg);
+    el("rect",{x:x0,y:y+2,width:Math.max(1.5,x1-x0),height:rowH-5,rx:3,fill:isHI?"var(--hi)":"var(--bar)"},svg);
     const t=el("text",{x:m.l-5,y:y+rowH-4,"text-anchor":"end",class:"tick","font-weight":isHI?"800":"400",fill:isHI?"var(--hi)":"var(--muted)"},svg);
     t.textContent=r.abbr;
     if(isHI||i===0||i===rows.length-1){
@@ -291,8 +300,8 @@ function standingChart(host, rows, opts){
   if(lo<0) el("line",{x1:X(0),x2:X(0),y1:m.t-4,y2:Hv-m.b,stroke:"var(--axis)","stroke-width":1},svg);
   // US marker
   if(opts.us!=null){
-    el("line",{x1:X(opts.us),x2:X(opts.us),y1:m.t-4,y2:Hv-m.b,stroke:"var(--ink2)","stroke-width":1.5,"stroke-dasharray":"5 4"},svg);
-    const t=el("text",{x:X(opts.us)+5,y:m.t+6,class:"tick","font-weight":"700",fill:"var(--ink2)"},svg);
+    el("line",{x1:X(opts.us),x2:X(opts.us),y1:m.t-4,y2:Hv-m.b,stroke:"var(--accent)","stroke-width":2,"stroke-dasharray":"6 4"},svg);
+    const t=el("text",{x:X(opts.us)+5,y:m.t+6,class:"tick","font-weight":"800",fill:"var(--accent)"},svg);
     t.textContent="U.S. "+opts.vfmt(opts.us);
   }
   host.appendChild(svg);
@@ -372,7 +381,7 @@ function rankify(arr){ return arr.map((r,i)=>({...r, rank:i+1})); }
       {name:"vs. U.S.", build:p=>{
         p.innerHTML=`<div class="legend"><span><span class="sw" style="background:var(--hi)"></span>Hawaiʻi</span><span><span class="sw" style="background:var(--us)"></span>United States</span><span style="color:var(--muted)">Indexed: Feb 2020 = 100</span></div>`;
         const h=document.createElement("div"); p.appendChild(h);
-        lineChart(h,[{data:idx(jb,"2020-02"),color:"var(--hi)",label:"Hawaiʻi"},{data:idx(S.us_jobs,"2020-02"),color:"var(--us)",label:"U.S."}],
+        lineChart(h,[{data:idx(jb,"2020-02"),color:"var(--hi)",label:"Hawaiʻi",area:true},{data:idx(S.us_jobs,"2020-02"),color:"var(--us)",label:"U.S."}],
           {yfmt:v=>v.toFixed(0), vfmt:v=>v.toFixed(1), ref:100, refLabel:"Feb 2020 = 100", aria:"Hawaii vs US jobs indexed to February 2020"});
       }},
       {name:"State standing", build:p=>{
@@ -420,7 +429,7 @@ function rankify(arr){ return arr.map((r,i)=>({...r, rank:i+1})); }
       {name:"vs. U.S.", build:p=>{
         p.innerHTML=`<div class="legend"><span><span class="sw" style="background:var(--hi)"></span>Hawaiʻi</span><span><span class="sw" style="background:var(--us)"></span>United States</span><span style="color:var(--muted)">Indexed: Jan 2019 = 100</span></div>`;
         const h=document.createElement("div"); p.appendChild(h);
-        lineChart(h,[{data:idx(zh,"2019-01"),color:"var(--hi)",label:"Hawaiʻi"},{data:idx(S.us_zhvi,"2019-01"),color:"var(--us)",label:"U.S."}],
+        lineChart(h,[{data:idx(zh,"2019-01"),color:"var(--hi)",label:"Hawaiʻi",area:true},{data:idx(S.us_zhvi,"2019-01"),color:"var(--us)",label:"U.S."}],
           {yfmt:v=>v.toFixed(0), vfmt:v=>v.toFixed(1), ref:100, refLabel:"Jan 2019 = 100", aria:"Hawaii vs US home values indexed to January 2019"});
       }},
       {name:"State standing", build:p=>{
@@ -479,7 +488,7 @@ function rankify(arr){ return arr.map((r,i)=>({...r, rank:i+1})); }
         p.innerHTML=`<div class="legend"><span><span class="sw" style="background:var(--hi)"></span>Hawaiʻi</span><span><span class="sw" style="background:var(--us)"></span>United States</span><span style="color:var(--muted)">Indexed: 2019 monthly average = 100</span></div>`;
         const h=document.createElement("div"); p.appendChild(h);
         const nrm=(s,base)=>s.map(d=>[d[0], d[1]/(base/12)*100]);
-        lineChart(h,[{data:nrm(ba,y19),color:"var(--hi)",label:"Hawaiʻi"},{data:nrm(S.us_ba,us19),color:"var(--us)",label:"U.S."}],
+        lineChart(h,[{data:nrm(ba,y19),color:"var(--hi)",label:"Hawaiʻi",area:true},{data:nrm(S.us_ba,us19),color:"var(--us)",label:"U.S."}],
           {yfmt:v=>v.toFixed(0), vfmt:v=>v.toFixed(0), ref:100, refLabel:"2019 avg = 100", aria:"Hawaii vs US business applications indexed to 2019 average"});
       }},
       {name:"State standing", build:p=>{
