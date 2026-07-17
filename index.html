@@ -169,7 +169,7 @@
       <h3>State standing views</h3>
       <p>A standing tab is included only where a same-methodology series exists for all 50 states and D.C. (here: BLS payrolls, Zillow ZHVI, Census Business Formation Statistics), so rankings are always like-for-like. Measures without valid national comparators (e.g., visitor arrivals) carry no standing tab.</p>
       <h3>Direction chips</h3>
-      <p>Because the Blueprint does not yet define quantified 2030 targets, this sample shows <b style="color:var(--ink)">direction relative to the Blueprint objective since the report's baseline</b> (improving / worsening) rather than on-track judgments. On-track status requires targets approved by the governing body and a published, metric-specific trajectory methodology.</p>
+      <p>Chips show <b style="color:var(--ink)">direction of movement only</b> — rising, falling, or flat — and are deliberately valence-free: the same movement can affect groups differently (rising home values favor owners and burden buyers). Judgments of improvement or on-track status require 2030 targets approved by the governing body and a published, metric-specific trajectory methodology; none are assigned in this sample.</p>
       <h3>Data classes & production path</h3>
       <ul>
         <li><b style="color:var(--ink)">This sample:</b> all three measures are <i>Public — reproducible</i> (BLS via FRED; Zillow research data; Census BFS via FRED; population via Census). Refresh is scriptable monthly.</li>
@@ -394,7 +394,7 @@ function rankify(arr){ return arr.map((r,i)=>({...r, rank:i+1})); }
     tags:"Results · Workforce · Actions 4–5 · Economic Action committee",
     title:"Nonfarm jobs vs. pre-pandemic level",
     headline:`${fmt.pct1(gap)} <small>vs. Feb 2020 · ${fmt.n0(last[1]*1000)} jobs (${fmt.mUS(last[0])})</small>`,
-    chip:{cls:"good",icon:"↑",text:"Improving",note:`was −4.4% at report baseline (Nov 2023) · still second-worst of 51`},
+    chip:{cls:"flat",icon:"↑",text:"Rising",note:`gap to Feb 2020 narrowed from −4.4% (report baseline, Nov 2023) · still second-worst of 51`},
     srcHtml:`Source: <a href="https://fred.stlouisfed.org/series/HINA" target="_blank" rel="noopener">BLS State &amp; Area Employment via FRED (HINA)</a> · seasonally adjusted · updates monthly · baseline: Feb 2020`,
     tabs:[
       {name:"Trend", build:p=>{
@@ -438,7 +438,7 @@ function rankify(arr){ return arr.map((r,i)=>({...r, rank:i+1})); }
     tags:"Results · Competitiveness & cost of living · Action 3 · Economic Action committee",
     title:"Typical home value",
     headline:`${fmt.usd0(last[1])} <small>${fmt.mUS(last[0])} · highest in the U.S. (U.S.: ${fmt.usd0(usLast)})</small>`,
-    chip:{cls:"bad",icon:"↓",text:"Worsening",note:`+18.3% in 5 years · affordability objective (Action 3)`},
+    chip:{cls:"flat",icon:"↑",text:"Rising",note:`+18.3% in 5 years · relates to affordability (Action 3)`},
     srcHtml:`Source: <a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener">Zillow Home Value Index (ZHVI), state series</a> · smoothed, seasonally adjusted · updates monthly`,
     tabs:[
       {name:"Trend", build:p=>{
@@ -492,7 +492,7 @@ function rankify(arr){ return arr.map((r,i)=>({...r, rank:i+1})); }
     tags:"Results · Local wealth & entrepreneurship · Actions 12–13 · Small Business committee",
     title:"New business applications",
     headline:`${fmt.n0(t12)} <small>trailing 12 months · ${fmt.n0(last[1])} in ${fmt.mUS(last[0])}</small>`,
-    chip:{cls:"good",icon:"↑",text:"Improving",note:`+${gr.toFixed(0)}% vs. 2019 — but U.S. is +${usGr.toFixed(0)}%; ${ord(hiPerRank)}-lowest per capita`},
+    chip:{cls:"flat",icon:"↑",text:"Rising",note:`+${gr.toFixed(0)}% vs. 2019 — U.S. is +${usGr.toFixed(0)}%; ${ord(hiPerRank)}-lowest per capita`},
     srcHtml:`Source: <a href="https://fred.stlouisfed.org/series/BABATOTALSAHI" target="_blank" rel="noopener">Census Business Formation Statistics via FRED</a> · seasonally adjusted · updates monthly · per-capita uses Census population estimates`,
     tabs:[
       {name:"Trend", build:p=>{
