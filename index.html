@@ -170,6 +170,8 @@
       <p>A standing tab is included only where a same-methodology series exists for all 50 states and D.C. (here: BLS payrolls, Zillow ZHVI, Census Business Formation Statistics), so rankings are always like-for-like. Measures without valid national comparators (e.g., visitor arrivals) carry no standing tab.</p>
       <h3>Direction chips</h3>
       <p>Chips show <b style="color:var(--ink)">direction of movement only</b> — rising, falling, or flat — and are deliberately valence-free: the same movement can affect groups differently (rising home values favor owners and burden buyers). Judgments of improvement or on-track status require 2030 targets approved by the governing body and a published, metric-specific trajectory methodology; none are assigned in this sample.</p>
+      <h3>Chart smoothing</h3>
+      <p>All monthly chart lines are trailing <b style="color:var(--ink)">3-month moving averages</b>, applied uniformly to damp month-to-month noise (disclosed beside each chart). Headline values, chips, standings, and the data tables use unsmoothed official monthly figures. Zillow's ZHVI carries additional source-level smoothing, as noted on that measure.</p>
       <h3>Data classes & production path</h3>
       <ul>
         <li><b style="color:var(--ink)">This sample:</b> all three measures are <i>Public — reproducible</i> (BLS via FRED; Zillow research data; Census BFS via FRED; population via Census). Refresh is scriptable monthly.</li>
@@ -357,6 +359,7 @@ function metricCard(cfg){
 const S=DATA.series, ST=DATA.standing, NM=DATA.names;
 const A2N={}; Object.entries(NM).forEach(([ab,nm])=>A2N[nm]=ab);
 
+function ma3(s){ return s.map((d,i)=>{ const w=s.slice(Math.max(0,i-2),i+1); return [d[0], w.reduce((a,x)=>a+x[1],0)/w.length]; }); }
 function comboTrend(p, cfg){
   p.innerHTML=`<div class="legend"><span><span class="sw" style="background:var(--hi)"></span>Hawaiʻi</span><span><span class="sw" style="background:var(--us)"></span>United States</span><span class="lnote" style="color:var(--muted)"></span></div><div class="toggle" role="group" aria-label="Time range"></div><div class="ctr"></div>`;
   const tog=p.querySelector(".toggle"), holder=p.querySelector(".ctr"), note=p.querySelector(".lnote");
@@ -365,9 +368,9 @@ function comboTrend(p, cfg){
     b.addEventListener("click",()=>{ tog.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); draw(i); });
     tog.appendChild(b); });
   function draw(i){
-    const w=cfg.windows[i]; holder.innerHTML=""; note.textContent=w.note||"";
+    const w=cfg.windows[i]; holder.innerHTML=""; note.textContent=(w.note?w.note+" · ":"")+"3-month moving average";
     const end=[cfg.hi[cfg.hi.length-1][0], cfg.us[cfg.us.length-1][0]].sort()[0];
-    let hiS=cfg.hi.filter(d=>d[0]>=w.from&&d[0]<=end), usS=cfg.us.filter(d=>d[0]>=w.from&&d[0]<=end);
+    let hiS=ma3(cfg.hi).filter(d=>d[0]>=w.from&&d[0]<=end), usS=ma3(cfg.us).filter(d=>d[0]>=w.from&&d[0]<=end);
     let yfmt=w.yfmt, vfmt=w.vfmt;
     if(w.mode==="idx"){
       const baseOf=s=>{ if(w.base==="start") return s[0][1]; if(w.base==="avg12") return s.slice(0,12).reduce((a,d)=>a+d[1],0)/Math.min(12,s.length); return s.find(d=>d[0]===w.base)[1]; };
