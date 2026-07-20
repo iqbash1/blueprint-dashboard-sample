@@ -171,7 +171,7 @@
       </ol>
       <p>Every measure shows what it counts, where it started, the latest number, its source, and when it updates.</p>
       <h3>State rankings</h3>
-      <p>A ranking tab appears only where every state is measured the same way, so comparisons are fair. Measures with no fair national comparison (like visitor arrivals) don't get one. Rankings cover the 50 states; Washington, D.C. isn't included.</p>
+      <p>A ranking tab appears only where every state is measured the same way, so comparisons are fair. Measures with no fair national comparison (like visitor arrivals) don't get one. Rankings cover the 50 states; Washington, D.C. isn't included. Rank 1 always means best for Hawaiʻi's goals — for home values, that follows the Blueprint's affordability goal, so lower prices rank better.</p>
       <h3>The arrows</h3>
       <p>Arrows show only which way a number is moving — <b style="color:var(--ink)">rising, falling, or flat</b>. They don't say good or bad, because the same change can help some people and hurt others: rising home prices favor owners and burden buyers. Saying whether Hawaiʻi is "on track" would need targets, and those haven't been set yet.</p>
       <h3>Smoothing</h3>
@@ -413,7 +413,7 @@ function rankify(arr){ return arr.map((r,i)=>({...r, rank:i+1})); }
       }},
       {name:"State standing", build:p=>{
         const h=document.createElement("div"); p.appendChild(h);
-        standingChart(h, stRows, {vfmt:fmt.pct1, us:usGap, note:`Job change since Feb 2020, best at top · Hawaiʻi is last of the 50 states`, aria:"State ranking of job change since February 2020"});
+        standingChart(h, stRows, {vfmt:fmt.pct1, us:usGap, note:`Job change since Feb 2020 (rank 1 = best) · Hawaiʻi is last of the 50 states`, aria:"State ranking of job change since February 2020"});
         tableView(p,["Rank","State","% vs Feb 2020"], stRows.map(r=>[r.rank,r.name,fmt.pct1(r.v)]));
       }},
       {name:"About this measure", build:p=>{
@@ -437,8 +437,8 @@ function rankify(arr){ return arr.map((r,i)=>({...r, rank:i+1})); }
 (() => {
   const zh=S.hi_zhvi, last=zh[zh.length-1];
   const v5=zh.find(d=>d[0]==="2021-06")[1], ch5=(last[1]-v5)/v5*100;
-  const lvlRows=rankify([...ST.zhvi].sort((a,b)=>b[1]-a[1]).map(([nm,lvl,g5])=>({abbr:A2N[nm]||nm,name:nm,v:lvl})));
-  const chRows=rankify([...ST.zhvi].sort((a,b)=>b[2]-a[2]).map(([nm,lvl,g5])=>({abbr:A2N[nm]||nm,name:nm,v:g5})));
+  const lvlRows=rankify([...ST.zhvi].sort((a,b)=>a[1]-b[1]).map(([nm,lvl,g5])=>({abbr:A2N[nm]||nm,name:nm,v:lvl})));
+  const chRows=rankify([...ST.zhvi].sort((a,b)=>a[2]-b[2]).map(([nm,lvl,g5])=>({abbr:A2N[nm]||nm,name:nm,v:g5})));
   const usLast=S.us_zhvi[S.us_zhvi.length-1][1];
   const hiLvlRank=lvlRows.find(r=>r.abbr==="HI").rank, hiChRank=chRows.find(r=>r.abbr==="HI").rank;
   metricCard({
@@ -459,8 +459,8 @@ function rankify(arr){ return arr.map((r,i)=>({...r, rank:i+1})); }
         p.innerHTML=`<div class="toggle" role="group" aria-label="Standing statistic"><button aria-pressed="true">Current level</button><button aria-pressed="false">5-year change</button></div><div class="stg"></div>`;
         const h=$(".stg",p), btns=p.querySelectorAll(".toggle button");
         const draw=mode=>{
-          if(mode===0) standingChart(h,lvlRows,{vfmt:v=>"$"+fmt.k(v), us:usLast, note:`Home values, June 2026 · Hawaiʻi is the highest of the 50 states`, aria:"State ranking of home value level"});
-          else standingChart(h,chRows,{vfmt:fmt.pct1, us:null, note:`Price change over five years, fastest at top · Hawaiʻi is ${ord(hiChRank)}-fastest of 50`, aria:"State ranking of five year home value change"});
+          if(mode===0) standingChart(h,lvlRows,{vfmt:v=>"$"+fmt.k(v), us:usLast, note:`Most affordable at top (rank 1 = best) · Hawaiʻi is 50th — the highest home values in the country`, aria:"State ranking of home value level"});
+          else standingChart(h,chRows,{vfmt:fmt.pct1, us:null, note:`Slowest price growth at top (rank 1 = best) · Hawaiʻi is ${ord(hiChRank)} of 50`, aria:"State ranking of five year home value change"});
         };
         btns.forEach((b,i)=>b.addEventListener("click",()=>{btns.forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");draw(i);}));
         draw(0);
@@ -472,7 +472,7 @@ function rankify(arr){ return arr.map((r,i)=>({...r, rank:i+1})); }
           <dt>What the report said</dt><dd>"Home prices … have risen an additional 38% over the past five years" (p. 21, 2023)</dd>
           <dt>Latest</dt><dd>${fmt.usd0(last[1])} (${fmt.mUS(last[0])}); +${ch5.toFixed(1)}% over 5 years; U.S. typical value ${fmt.usd0(usLast)}</dd>
           <dt>2030 target</dt><dd>Not set yet. A fair target would compare prices with incomes.</dd>
-          <dt>Standing</dt><dd>Highest of the 50 states; ${ord(hiChRank)}-fastest five-year growth</dd>
+          <dt>Standing</dt><dd>${ord(hiLvlRank)} of 50 on affordability — the highest home values in the country; ${ord(hiChRank)} of 50 on five-year price growth (rank 1 = slowest)</dd>
           <dt>Updates</dt><dd>Monthly, about two weeks after the fact; past values shift a little as the model updates.</dd>
           <dt>Source</dt><dd><a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener">Zillow Research public data</a> — used because no government source publishes a monthly home-value figure for every state. The full version adds Census data on housing costs and building permits.</dd>
           <dt>In the Blueprint</dt><dd>Competitiveness goal · Action 3 (housing supply) · Economic Action committee</dd>
@@ -515,8 +515,8 @@ function rankify(arr){ return arr.map((r,i)=>({...r, rank:i+1})); }
         const h=$(".stg",p), btns=p.querySelectorAll(".toggle button");
         const usPer=usT12/342_000_000*1000;
         const draw=mode=>{
-          if(mode===0) standingChart(h,perRows,{vfmt:fmt.n1, us:null, note:`Applications per 1,000 residents, most at top · Hawaiʻi is ${ord(hiPerLow)} from the bottom of 50`, aria:"State ranking of business applications per capita"});
-          else standingChart(h,grRows,{vfmt:fmt.pct1, us:usGr, note:`Growth since 2019, fastest at top · Hawaiʻi is ${ord(hiGrLow)} from the bottom of 50`, aria:"State ranking of business application growth since 2019"});
+          if(mode===0) standingChart(h,perRows,{vfmt:fmt.n1, us:null, note:`Applications per 1,000 residents (rank 1 = most) · Hawaiʻi is ${ord(hiPerLow)} from the bottom of 50`, aria:"State ranking of business applications per capita"});
+          else standingChart(h,grRows,{vfmt:fmt.pct1, us:usGr, note:`Growth since 2019 (rank 1 = fastest) · Hawaiʻi is ${ord(hiGrLow)} from the bottom of 50`, aria:"State ranking of business application growth since 2019"});
         };
         btns.forEach((b,i)=>b.addEventListener("click",()=>{btns.forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");draw(i);}));
         draw(0);
